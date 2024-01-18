@@ -59,3 +59,4 @@ print(f"Closest match: {min_value} @ {flipped_coords}");
 
 image_map = Image.fromarray(normalized_output, mode='L')
 image_map.show();
+

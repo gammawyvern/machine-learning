@@ -21,8 +21,8 @@ except Exception as e:
     sys.exit();
 
 ########################################
-# Setup numpy arrays for easier 
-# calculations 
+# Setup numpy matrices for faster and 
+# easier calculations 
 ########################################
 
 main_array = np.array(main_image);
@@ -37,16 +37,13 @@ output_size = (main_height - (template_height - 1),
 output_array = np.full(output_size, None, dtype=object)
 
 ########################################
-# Calculate output array
+# Calculate output matrix and 
+# important matrix values
 ########################################
 
-def calculate_diff(image_pos):
-    x, y = image_pos;
+for y, x in np.ndindex(output_array.shape):
     main_slice = main_array[y:y+template_height, x:x+template_width];
     output_array[y, x] = np.sum(np.abs(main_slice - template_array));
-
-for index in np.ndindex(output_array.shape):
-    calculate_diff(index);
 
 min_value = np.min(output_array);
 max_value = np.max(output_array);

@@ -21,7 +21,7 @@ else:
     filter_size = int(filter_size);
 
 try:
-    image = Image.open(image_path).convert("L");
+    image = Image.open(image_path);
 except Exception as e:
     print(f"Error opening image: {e}");
     sys.exit();
@@ -31,21 +31,24 @@ except Exception as e:
 # important matrix values
 ########################################
 
-def filter_image(gray_image, filter_matrix):
-    image_array = np.array(gray_image);
+def filter_channel(channel, filter_matrix):
+    channel_array = np.array(channel);
 
-    output_height = image_array.shape[0] - (filter_matrix.shape[0] - 1);
-    output_width = image_array.shape[0] - (filter_matrix.shape[1] - 1);
-
+    output_height = channel_array.shape[0] - (filter_matrix.shape[0] - 1);
+    output_width = channel_array.shape[1] - (filter_matrix.shape[1] - 1);
     output_array = np.full((output_height, output_width), None, dtype=object)
 
     for y, x in np.ndindex(output_array.shape):
-        image_slice = image_array[y: y + filter_matrix.shape[0], 
-                                  x: x + filter_matrix.shape[1]];
+        channel_slice = channel_array[y: y + filter_matrix.shape[0], 
+                                      x: x + filter_matrix.shape[1]];
+        output_array[y, x] = np.sum((channel_slice * filter_matrix));
 
-        output_array[y, x] = np.sum((image_slice * filter_matrix));
-    
     return Image.fromarray(output_array.astype(np.uint8), mode='L');
+
+def filter_image(image, filter_matrix):
+    channels = image.split(); 
+    filtered_channels = [filter_channel(channel, filter_matrix) for channel in channels]
+    return Image.merge("RGBA", filtered_channels);
 
 ########################################
 # Simple average 
@@ -61,6 +64,7 @@ def create_filter(size, fn):
 
 diagonal = lambda x, y: x - y == 0 or x - y == filter_size - 1;
 d_filter = create_filter(filter_size, diagonal);
+
 filtered_image = filter_image(image, d_filter); 
 filtered_image.show();
 

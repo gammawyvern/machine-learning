@@ -48,7 +48,7 @@ def filter_channel(channel, filter_matrix):
 def filter_image(image, filter_matrix):
     channels = image.split(); 
     filtered_channels = [filter_channel(channel, filter_matrix) for channel in channels]
-    return Image.merge("RGBA", filtered_channels);
+    return Image.merge(image.mode, filtered_channels);
 
 ########################################
 # Simple average 

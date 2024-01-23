@@ -44,19 +44,23 @@ def filter_image(gray_image, filter_matrix):
                                   x: x + filter_matrix.shape[1]];
 
         output_array[y, x] = np.sum((image_slice * filter_matrix));
+    
+    return Image.fromarray(output_array.astype(np.uint8), mode='L');
 
-    return output_array.astype(np.uint8);
+########################################
+# Simple average 
+########################################
+
+def create_filter(size, fn):
+    array = np.array([[fn(x, y) for x in range(size)] for y in range(size)]);
+    return array / np.sum(array);
 
 ########################################
 # Testing code
 ########################################
 
-def get_simple_filter(size):
-    average_percent = 1 / (size * size)
-    return np.full((size, size), average_percent); 
-
-# filtered_matrix = filter_image(image, my_filter);
-filtered_matrix = filter_image(image, get_simple_filter(filter_size));
-image_smoothed = Image.fromarray(filtered_matrix, mode='L')
-image_smoothed.show();
+diagonal = lambda x, y: x - y == 0 or x - y == filter_size - 1;
+d_filter = create_filter(filter_size, diagonal);
+filtered_image = filter_image(image, d_filter); 
+filtered_image.show();
 

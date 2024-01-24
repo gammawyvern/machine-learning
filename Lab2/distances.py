@@ -24,11 +24,6 @@ def manhattan_dist(point_one, point_two):
 point_one = (2, 2);
 point_two = (5, 5);
 
-plt.grid();
-plt.plot(point_one[0], point_one[1], marker="o");
-plt.plot(point_two[0], point_two[1], marker="o");
-plt.show();
-
 ########################################
 # Euclidean distances 
 ########################################
@@ -40,8 +35,8 @@ print();
 point_one_2 = (2 * point_one[0], 2 * point_one[1]);
 point_two_2 = (2 * point_two[0], 2 * point_two[1]);
 
-print(f"My euclidean distance (Point scaled by 2): {euclid_dist(point_one_2, point_two_2)}");
-print(f"SciPy euclidean distance (Point scaled by 2): {euclidean(point_one_2, point_two_2)}");
+print(f"My euclidean distance (Points scaled by 2): {euclid_dist(point_one_2, point_two_2)}");
+print(f"SciPy euclidean distance (Points scaled by 2): {euclidean(point_one_2, point_two_2)}");
 print();
 
 ########################################
@@ -52,7 +47,16 @@ print(f"My manhattan distance: {manhattan_dist(point_one, point_two)}");
 print(f"SciPy manhattan distance: {cityblock(point_one, point_two)}");
 print();
 
-print(f"My manhattan distance (Point scaled by 2): {manhattan_dist(point_one_2, point_two_2)}");
-print(f"SciPy manhattan distance (Point scaled by 2): {cityblock(point_one_2, point_two_2)}");
+print(f"My manhattan distance (Points scaled by 2): {manhattan_dist(point_one_2, point_two_2)}");
+print(f"SciPy manhattan distance (Points scaled by 2): {cityblock(point_one_2, point_two_2)}");
 print();
+
+########################################
+# Show points plotted
+########################################
+
+plt.grid();
+plt.plot(point_one[0], point_one[1], marker="o");
+plt.plot(point_two[0], point_two[1], marker="o");
+plt.show();
 

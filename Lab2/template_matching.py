@@ -42,6 +42,7 @@ output_array = np.full(output_size, None, dtype=object)
 ########################################
 
 # Avoid double for loop, chad behavior
+# Single indents only here
 for y, x in np.ndindex(output_array.shape):
     main_slice = main_array[y:y+template_height, x:x+template_width];
     output_array[y, x] = np.sum(np.abs(main_slice - template_array));

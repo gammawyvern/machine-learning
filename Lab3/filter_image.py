@@ -1,24 +1,19 @@
-from PIL import Image, ImageOps;
+from PIL import Image, ImageOps, ImageFilter;
 import numpy as np;
 import sys;
+
+from PIL import ImageTk; 
+import tkinter as tk;
 
 ########################################
 # Validate Input / Load image / Setup
 ########################################
 
-if len(sys.argv) != 3:
-    # TODO maybe add filter selection from command line later 
-    print("Usage: python filter_image.py <image_path> <filter_square_size>");
+if len(sys.argv) != 2:
+    print("Usage: python filter_image.py <image_path>");
     sys.exit();
 
 image_path = sys.argv[1];
-filter_size = sys.argv[2]; 
-
-if not filter_size.isdigit():
-    print(f"<filter_square_size> is not a valid integer: {filter_size}");
-    sys.exit();
-else:
-    filter_size = int(filter_size);
 
 try:
     image = Image.open(image_path);
@@ -27,8 +22,8 @@ except Exception as e:
     sys.exit();
 
 ########################################
-# Calculate output matrix and 
-# important matrix values
+# Filter functions to apply a filter 
+# matrix to all channels of an image.
 ########################################
 
 def filter_channel(channel, filter_matrix):
@@ -50,21 +45,46 @@ def filter_image(image, filter_matrix):
     filtered_channels = [filter_channel(channel, filter_matrix) for channel in channels]
     return Image.merge(image.mode, filtered_channels);
 
-########################################
-# Simple average 
-########################################
-
 def create_filter(size, fn):
-    array = np.array([[fn(x, y) for x in range(size)] for y in range(size)]);
+    array = np.array([[fn(x, y, size) for x in range(size)] for y in range(size)]);
     return array / np.sum(array);
 
 ########################################
-# Testing code
+# Filter / Blur code 
 ########################################
 
-diagonal = lambda x, y: x - y == 0 or x - y == filter_size - 1;
-d_filter = create_filter(filter_size, diagonal);
+diagonal = lambda x, y, size: x - y == 0 or x - y == size - 1;
 
-filtered_image = filter_image(image, d_filter); 
-filtered_image.show();
+filtered_images = [image];
+for size in [3, 9, 15]:
+    d_filter = create_filter(size, diagonal);
+    filtered_image = filter_image(image, d_filter); 
+    filtered_images.append(filtered_image);
+
+########################################
+# Edge detection code
+########################################
+
+gray_image = image.convert("L");
+edge_images = [gray_image];
+edge_images.append(gray_image.filter(ImageFilter.FIND_EDGES));
+
+########################################
+# Printing to screen with Tkinter
+########################################
+
+def display_images(images, title):
+    root = tk.Tk();
+    root.title(title);
+
+    for image_id, image in enumerate(images):
+        tk_image = ImageTk.PhotoImage(image)
+        label = tk.Label(root, image=tk_image)
+        label.grid(row=0, column=image_id, padx=5, pady=5)
+        label.image = tk_image
+
+    root.mainloop()
+
+display_images(filtered_images, "Blurred Images (3x3 | 9x9 | 15x15)");
+display_images(edge_images, "Edge Detection");
 

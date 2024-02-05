@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import multiprocessing
 
+import os;
+
 ########################################
 # Class for CNN
 ########################################
@@ -59,55 +61,77 @@ def main():
     print("Loading Data");
     batch_size = 4;
 
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+    trainset = torchvision.datasets.CIFAR10(root="./data", train=True,
         download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
         shuffle=True, num_workers=2)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+    testset = torchvision.datasets.CIFAR10(root="./data", train=False,
         download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
         shuffle=False, num_workers=2)
 
-    classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    classes = ("plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck")
     print("Data Loaded");
     print();
 
+    """ TkInter causing problems for me on WSL?
     print("Testing Images / Data");
+    """
     data_iter = iter(trainloader);
     images, labels = next(data_iter);
+    print(" ".join(f"{classes[labels[j]]:5s}" for j in range(batch_size)))
+    """
     img_show(torchvision.utils.make_grid(images))
-    print(' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
     print();
-
-    print("Setting up NN");
-    PATH = './cifar_net.pth'
-
-    net = Net();
-    net.load_state_dict(torch.load(PATH));
-    
-    """ Already trained
-    criterion = nn.CrossEntropyLoss();
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9);
-
-    for epoch in range(2): # loop over the dataset multiple times
-        running_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
-            inputs, labels = data
-            optimizer.zero_grad()
-            outputs = net(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
-            if i % 2000 == 1999: 
-                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-                running_loss = 0.0
-                print('Finished Training')
-
-    torch.save(net.state_dict(), PATH)
     """
 
+    print("Setting up NN");
+    net = Net();
 
+    script_dir = os.path.dirname(os.path.abspath(__file__));
+    PATH = os.path.join(script_dir, "cifar_net.pth");
+
+    if os.path.exists(PATH):
+        net.load_state_dict(torch.load(PATH));
+        print(f"Loaded existing NN");
+    else: 
+        criterion = nn.CrossEntropyLoss();
+        optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9);
+
+        for epoch in range(2): # loop over the dataset multiple times
+            running_loss = 0.0
+            for i, data in enumerate(trainloader, 0):
+                inputs, labels = data
+                optimizer.zero_grad()
+                outputs = net(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+                running_loss += loss.item()
+                if i % 2000 == 1999: 
+                    print(f"[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}")
+                    running_loss = 0.0
+
+        torch.save(net.state_dict(), PATH)
+        print(f"Finished training new NN");
+    print();
+
+    print(f"Testing Trained NN");
+    outputs = net(images);
+    
+    _, predicted = torch.max(outputs, 1);
+    # print("Predicted:", " ".join(f"{classes[predicted[j]]:5s}" for j in range(4)));
+
+    correct = 0;
+    total = 0;
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data;
+            outputs = net(images);
+            _, predicted = torch.max(outputs.data, 1);
+            total += labels.size(0);
+            correct += (predicted == labels).sum().item();
+    print(f"Accuracy of the network on the 10000 test images: {100 * correct // total} %");
 
 ########################################
 # Script run protection

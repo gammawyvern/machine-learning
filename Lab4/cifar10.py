@@ -79,13 +79,13 @@ def main():
     """
     data_iter = iter(trainloader);
     images, labels = next(data_iter);
-    print(" ".join(f"{classes[labels[j]]:5s}" for j in range(batch_size)))
+    # print(" ".join(f"{classes[labels[j]]:5s}" for j in range(batch_size)))
     """
     img_show(torchvision.utils.make_grid(images))
     print();
     """
 
-    print("Setting up NN");
+    print("Setting up Neural Network");
     net = Net();
 
     script_dir = os.path.dirname(os.path.abspath(__file__));
@@ -93,7 +93,7 @@ def main():
 
     if os.path.exists(PATH):
         net.load_state_dict(torch.load(PATH));
-        print(f"Loaded existing NN");
+        print(f"Loaded existing Neural Network at:\n\t\"{PATH}\"");
     else: 
         criterion = nn.CrossEntropyLoss();
         optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9);
@@ -113,10 +113,10 @@ def main():
                     running_loss = 0.0
 
         torch.save(net.state_dict(), PATH)
-        print(f"Finished training new NN");
+        print(f"Finished training new Neural Network");
     print();
 
-    print(f"Testing Trained NN");
+    print(f"Testing Trained Neural Network");
     outputs = net(images);
     
     _, predicted = torch.max(outputs, 1);
@@ -150,6 +150,7 @@ def main():
     for classname, correct_count in correct_pred.items():
         accuracy = 100 * float(correct_count) / total_pred[classname]
         print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+    print();
 
 ########################################
 # Script run protection
@@ -158,5 +159,6 @@ def main():
 if __name__ == "__main__":
     multiprocessing.freeze_support();
     print("Lab Four");
+    print();
     main();
 

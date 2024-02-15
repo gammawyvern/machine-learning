@@ -63,7 +63,6 @@ def main():
 
     classes = ("plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck")
     my_classes = ("plane", "car", "bird", "ship", "truck")
-    my_classes_ids = [classes.index(my_class) for my_class in my_classes];
 
     trainset = torchvision.datasets.CIFAR10(root="./data", train=True,
         download=True, transform=transform)
@@ -71,8 +70,9 @@ def main():
         download=True, transform=transform)
 
     # Alter loaded in data
-    trainset = [(image, label) for image, label in trainset if label in my_classes_ids]
-    testset = [(image, label) for image, label in testset if label in my_classes_ids]
+    class_mapping = {class_name: i for i, class_name in enumerate(my_classes)}
+    trainset = [(image, class_mapping[classes[label]]) for image, label in trainset if classes[label] in my_classes]
+    testset = [(image, class_mapping[classes[label]]) for image, label in testset if classes[label] in my_classes]
 
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
         shuffle=True, num_workers=2)
@@ -89,7 +89,7 @@ def main():
     net = Net();
 
     script_dir = os.path.dirname(os.path.abspath(__file__));
-    PATH = os.path.join(script_dir, "cifar_net.pth");
+    PATH = os.path.join(script_dir, "net_5.pth");
 
     if os.path.exists(PATH):
         net.load_state_dict(torch.load(PATH));
@@ -143,8 +143,8 @@ def main():
 
             for label, prediction in zip(labels, predictions):
                 if label == prediction:
-                    correct_pred[classes[label]] += 1
-                total_pred[classes[label]] += 1
+                    correct_pred[my_classes[label]] += 1
+                total_pred[my_classes[label]] += 1
 
     for classname, correct_count in correct_pred.items():
         accuracy = 100 * float(correct_count) / total_pred[classname]

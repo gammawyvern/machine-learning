@@ -30,6 +30,9 @@ variance_percent = key_eigen_sum / total_eigen_sum;
 # TODO I messed this up
 # Either need to keep original format of linalg.eigh,
 # or alter it back here for this to work
+
+"""
 compressed_image = np.matmul(img_norm, key_eig_pairs);
 lossy_compressed_image = np.matmul(compressed_image, np.transpose(key_eig_pairs)) + img_mean;
+"""
 

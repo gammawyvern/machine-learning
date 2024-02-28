@@ -2,6 +2,10 @@ from PIL import Image;
 import numpy as np;
 import sys;
 
+
+# Command line support for num of pcs 
+num_pcs = int(sys.argv[1]) if len(sys.argv) > 1 else 15
+
 # Grayscale
 img = Image.open("/home/keag/Github/machine-learning/pca-lab/input-image.bmp");
 
@@ -15,12 +19,11 @@ img_covar = np.cov(img_norm, rowvar=False)
 
 # Determine the eigenvectors/values from the covariance 
 eig_val, eig_vec = np.linalg.eigh(img_covar);
-# TODO Pairs might be messed up, may need to transpose eig_vec?
 eig_pairs = list(zip(eig_val, np.transpose(eig_vec))); 
 
 # Sort and keep the 15 most important eigenvectors
 eig_pairs_sorted = sorted(eig_pairs, key=lambda pair: pair[0], reverse=True);
-key_eig_pairs = eig_pairs_sorted[0:15];
+key_eig_pairs = eig_pairs_sorted[0:num_pcs];
 
 # Calculate the variance % of 15 chosen eigenvectors
 total_eigen_sum = np.sum(eig_val);
@@ -38,3 +41,4 @@ lossy_compressed_image = np.matmul(compressed_image, key_eig_vectors) + img_mean
 # Display image
 compressed_image_pil = Image.fromarray(lossy_compressed_image)
 compressed_image_pil.show()
+

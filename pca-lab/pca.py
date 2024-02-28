@@ -36,9 +36,12 @@ key_eig_vectors_transposed = np.transpose(key_eig_vectors)
 
 # Compress image with key vectors
 compressed_image = np.matmul(img_norm, key_eig_vectors_transposed);
-lossy_compressed_image = np.matmul(compressed_image, key_eig_vectors) + img_mean
+lossy_compressed_image = np.matmul(compressed_image, key_eig_vectors) + img_mean;
 
 # Display image
+# lossy_compressed_image_int = lossy_compressed_image.astype(np.uint8)
 compressed_image_pil = Image.fromarray(lossy_compressed_image)
-compressed_image_pil.show()
+# image_path = "compressed_" + str(num_pcs) + ".bmp";
+# compressed_image_pil.save(image_path);
+compressed_image_pil.show();
 

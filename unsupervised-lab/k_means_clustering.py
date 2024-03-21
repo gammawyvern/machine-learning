@@ -1,35 +1,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder
 from sklearn.datasets import make_blobs
+import pandas as pd
 
-# Generate sample data
-n_samples = 300
-n_features = 2
-n_clusters = 3
-X, _ = make_blobs(n_samples=n_samples, n_features=n_features, centers=n_clusters, random_state=42)
+data = pd.read_csv("./mall_customer.csv")
 
-# Plot the data points
+label_encoder = LabelEncoder()
+data['Genre'] = label_encoder.fit_transform(data['Genre'])
+
+X = data[["CustomerID", "Genre", "Age", "Annual Income (k$)", "Spending Score (1-100)"]].values
+
+# Display first 2 features
 plt.scatter(X[:, 0], X[:, 1], s=50)
 plt.title("Original Data Points")
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
+plt.xlabel("CustomerID")
+plt.ylabel("Gender")
 plt.show()
 
-# Perform k-means clustering
+n_clusters = 3
 kmeans = KMeans(n_clusters=n_clusters)
 kmeans.fit(X)
 
-# Get the cluster centroids and labels
 centroids = kmeans.cluster_centers_
 labels = kmeans.labels_
 
-# Plot the clustered data points along with centroids
+# Display first 2 features
 plt.scatter(X[:, 0], X[:, 1], c=labels, s=50, cmap='viridis')
 plt.scatter(centroids[:, 0], centroids[:, 1], marker='*', s=200, c='red', label='Centroids')
 plt.title("Clustered Data Points with Centroids")
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.legend()
+plt.xlabel("CustomerID")
+plt.ylabel("Gender")
 plt.show()
 

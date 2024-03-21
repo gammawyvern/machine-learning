@@ -7,7 +7,7 @@ import sys;
 num_pcs = int(sys.argv[1]) if len(sys.argv) > 1 else 15
 
 # Grayscale
-img = Image.open("/home/keag/Github/machine-learning/pca-lab/input-image.bmp");
+img = Image.open("./input-image.bmp");
 
 # Get mean with numpy
 img_matrix = np.array(img);

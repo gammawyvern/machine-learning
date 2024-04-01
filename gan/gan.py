@@ -129,5 +129,5 @@ latent_dim = 5;
 discriminator = define_discriminator();
 generator = define_generator(latent_dim);
 gan_model = define_gan(generator, discriminator);
-train(generator, discriminator, gan_model, latent_dim)
+train(generator, discriminator, gan_model, latent_dim, n_epochs=4000, n_eval=4000)
 

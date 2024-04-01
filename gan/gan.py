@@ -92,7 +92,7 @@ def train_gan(gan_model, latent_dim, n_epochs=10000, n_batch=128):
         y_gan = ones((n_batch, 1));
         gan_model.train_on_batch(x_gan, y_gan);
 
-def train(g_model, d_model, gan_model, latent_dim, n_epochs=10000, n_batch=128):
+def train(g_model, d_model, gan_model, latent_dim, n_epochs=10000, n_batch=128, n_eval=2000):
     half_batch = int(n_batch / 2);
 
     for i in range(n_epochs):
@@ -103,6 +103,9 @@ def train(g_model, d_model, gan_model, latent_dim, n_epochs=10000, n_batch=128):
         x_gan = generate_latent_points(latent_dim, n_batch);
         y_gan = ones((n_batch, 1));
         gan_model.train_on_batch(x_gan, y_gan);
+
+        if (i+1) % n_eval == 0:
+            summarize_performance(i, g_model, d_model, latent_dim);
 
 ########################################
 # Performance Checking Code
@@ -126,5 +129,5 @@ latent_dim = 5;
 discriminator = define_discriminator();
 generator = define_generator(latent_dim);
 gan_model = define_gan(generator, discriminator);
-gan_model.summary();
+train(generator, discriminator, gan_model, latent_dim)
 

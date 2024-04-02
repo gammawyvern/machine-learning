@@ -6,29 +6,17 @@ from numpy import hstack, zeros, ones;
 from keras.models import Sequential;
 from keras.layers import Dense;
 
-def func(x):
-    return x*x;
-
 ########################################
 # Generation Code
 ########################################
 
 def generate_real_samples(n):
     x1 = rand(n) - 0.5;
-    x2 = x1 * x1;
+    x2 = 2**x;
     x1 = x1.reshape(n, 1);
     x2 = x2.reshape(n, 1);
     x = hstack((x1, x2));
     y = ones((n, 1));
-    return x, y;
-
-def generate_fake_samples(n):
-    x1 = -1 + rand(n) * 2;
-    x2 = -1 + rand(n) * 2;
-    x1 = x1.reshape(n, 1);
-    x2 = x2.reshape(n, 1);
-    x = hstack((x1, x2));
-    y = zeros((n, 1));
     return x, y;
 
 ########################################
@@ -129,5 +117,5 @@ latent_dim = 5;
 discriminator = define_discriminator();
 generator = define_generator(latent_dim);
 gan_model = define_gan(generator, discriminator);
-train(generator, discriminator, gan_model, latent_dim, n_epochs=4000, n_eval=4000)
+train(generator, discriminator, gan_model, latent_dim)
 

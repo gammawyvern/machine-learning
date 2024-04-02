@@ -12,7 +12,7 @@ from keras.layers import Dense;
 
 def generate_real_samples(n):
     x1 = rand(n) - 0.5;
-    x2 = 2**x;
+    x2 = 2**x1;
     x1 = x1.reshape(n, 1);
     x2 = x2.reshape(n, 1);
     x = hstack((x1, x2));

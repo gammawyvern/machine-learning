@@ -111,6 +111,7 @@ def plot_result(trainY, testY, train_predict, test_predict):
     plt.xlabel('Observation number after given time steps')
     plt.ylabel('Sunspots scaled')
     plt.title('Actual and Predicted Values. The Red Line Separates The Training And Test Examples')
+    plt.show()
 
 plot_result(trainY, testY, train_predict, test_predict)
 
